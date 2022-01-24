@@ -22,10 +22,10 @@ For running cyclical focal loss with the CIFAR-10 dataset the following command 
 	-b 384 --model tresnet_m --checkpoint-hist 4 --sched cosine --epochs 200 --lr 0.15 
 	--warmup-lr 0.01 --warmup-epochs 3 --cooldown-epochs 1 --weight-decay 5e-4 
 	--amp --remode pixel --reprob 0.6 --aug-splits 3 --aa rand-m9-mstd0.5-inc1 
-	--resplit --split-bn  --dist-bn reduce --focal_loss asym-cyclical --gamma0 3 
+	--resplit --split-bn  --dist-bn reduce --focal_loss asym-cyclical --gamma_hc 3 
 	--gamma_pos 2 --gamma_neg 2 --cyclical_factor 4
 ```
-Note the new input parameters of `focal_loss, gamma0, gamma_pos, gamma_neg, and cyclical_factor`.
+Note the new input parameters of `focal_loss, gamma_hc, gamma_pos, gamma_neg, and cyclical_factor`.
 
 For CIFAR-100, the following command line was the same as the one for CIFAR-10 except to replace cifar10 with cifar100 as follows:
 ```bash
@@ -38,7 +38,7 @@ An example command line for submitting an experiment on with Imagenet:
 	--warmup-epochs 3 --weight-decay 2e-5 --cooldown-epochs 1 
 	--model-ema --checkpoint-hist 4 --workers 8 --aa=rand-m9-mstd0.5-inc1 -j=16 --amp 
 	--model=tresnet_m --epochs=200 --mixup=0.2 --sched='cosine' --reprob=0.4 
-	--remode=pixel --focal_loss asym-cyclical --gamma0 3 --gamma_pos 2 --gamma_neg 2 
+	--remode=pixel --focal_loss asym-cyclical --gamma_hc 3 --gamma_pos 2 --gamma_neg 2 
 	--cyclical_factor 4
 ```
 
