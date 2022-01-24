@@ -34,7 +34,6 @@ from timm.models import create_model, safe_model_name, resume_checkpoint, load_c
 from timm.utils import *
 from timm.loss import *
 from timm.loss.asl_focal_loss import *
-from timm.loss.clcarwin_focal_loss import *
 from timm.optim import create_optimizer_v2, optimizer_kwargs
 from timm.scheduler import create_scheduler
 from timm.utils import ApexScaler, NativeScaler
