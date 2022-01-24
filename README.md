@@ -61,7 +61,7 @@ If T_min is 0, a constant softmax temperature of 1 is used.
 
 For cyclical gradient clipping, the new input parameters are:
 ```bash
---clip_min 0.5 --clop_max 2
+--clip_min 0.5 --clIp_max 2
 ```
 If clip_min is 0, clipping is governed by clip-grad (i.e., the default is None).
 
