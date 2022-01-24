@@ -64,11 +64,3 @@ For cyclical gradient clipping, the new input parameters are:
 --clip_min 0.5 --clIp_max 2
 ```
 If clip_min is 0, clipping is governed by clip-grad (i.e., the default is None).
-
-
-
-
-These papers describe several novel techniques that are implemented in this code: cyclical focal loss, cyclical weight decay, cyclical softmax temperature, and cyclical gradient clipping. 
-
-
-
