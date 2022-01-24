@@ -25,7 +25,7 @@ For running cyclical focal loss with the CIFAR-10 dataset the following command 
 	--resplit --split-bn  --dist-bn reduce --focal_loss asym-cyclical --gamma0 3 
 	--gamma_pos 2 --gamma_neg 2 --cyclical_factor 4
 ```
-Note the new input parameters of `focal_loss, gamma0, gamma_pos, gamma_neg`, and cyclical_factor`.
+Note the new input parameters of `focal_loss, gamma0, gamma_pos, gamma_neg, and cyclical_factor`.
 
 For CIFAR-100, the following command line was the same as the one for CIFAR-10 except to replace cifar10 with cifar100 as follows:
 ```bash
