@@ -153,7 +153,7 @@ parser.add_argument('--cyclical_factor', type=float, default=2,
                     help='Cyclical focal loss factor; must be >=1 (default=2)')
 parser.add_argument('--gamma', type=float, default=2, 
                     help='Symetric focal loss gamma (default=2)')
-parser.add_argument('--gamma0', type=float, default=0, 
+parser.add_argument('--gamma_hc', type=float, default=0, 
                     help='Cyclical focal loss gamma (default=0)')
 parser.add_argument('--gamma_pos', type=float, default=0, 
                     help='Asymetric focal loss positive gamma (default=0)')
@@ -604,11 +604,11 @@ def main():
     elif args.focal_loss=="asym":
         train_loss_fn = ASLSingleLabel(gamma_pos=args.gamma_pos, gamma_neg=args.gamma_neg)
     elif args.focal_loss=="cyclical":
-        train_loss_fn = CFocalLoss(gamma=args.gamma, gamma0=args.gamma0, epochs=num_epochs, 
+        train_loss_fn = CFocalLoss(gamma=args.gamma, gamma_hc=args.gamma_hc, epochs=num_epochs, 
                                    factor=args.cyclical_factor)
     elif args.focal_loss=="asym-cyclical":
         train_loss_fn = Cyclical_FocalLoss(gamma_pos=args.gamma_pos, gamma_neg=args.gamma_neg,
-                        epochs=num_epochs, gamma0=args.gamma0, factor=args.cyclical_factor)
+                        epochs=num_epochs, gamma_hc=args.gamma_hc, factor=args.cyclical_factor)
     elif args.jsd_loss:
         assert num_aug_splits > 1  # JSD only valid with aug splits set
         train_loss_fn = JsdCrossEntropy(num_splits=num_aug_splits, smoothing=args.smoothing)

@@ -32,8 +32,8 @@ networks['classifier'] = {'def_file': './models/DotProductClassifier.py',
 config['networks'] = networks
 
 criterions = {}
-perf_loss_param = {'gamma_pos': 1, 'gamma_neg': 4, 'gamma0': 2, 'epochs': 30, 'factor': 2 }
-#perf_loss_param = {'gamma': 2, 'gamma0': 2, 'epochs': 30, 'factor': 2 }
+perf_loss_param = {'gamma_pos': 1, 'gamma_neg': 4, 'gamma_hc': 2, 'epochs': 30, 'factor': 2 }
+#perf_loss_param = {'gamma': 2, 'gamma_hc': 2, 'epochs': 30, 'factor': 2 }
 #perf_loss_param = {}
 #criterions['PerformanceLoss'] = {'def_file': './loss/SoftmaxLoss.py', 'loss_params': perf_loss_param,
 #criterions['PerformanceLoss'] = {'def_file': './loss/clcarwin_focal_loss.py', 'loss_params': perf_loss_param,

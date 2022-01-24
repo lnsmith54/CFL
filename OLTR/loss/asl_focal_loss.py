@@ -2,15 +2,15 @@
 import torch
 import torch.nn as nn
 
-def create_loss (gamma_pos, gamma_neg, gamma0, epochs, factor):
+def create_loss (gamma_pos, gamma_neg, gamma_hc, epochs, factor):
 #def create_loss ():
     print('Loading Cyclical Focal Loss.')
-    print("gamma_pos= ", gamma_pos, "gamma_neg= ", gamma_neg, " gamma0= ",gamma0, " epochs= ",epochs, " factor= ",factor)
-    if gamma0 == 0:
+    print("gamma_pos= ", gamma_pos, "gamma_neg= ", gamma_neg, " gamma_hc= ",gamma_hc, " epochs= ",epochs, " factor= ",factor)
+    if gamma_hc == 0:
         return ASLSingleLabel(gamma_pos=gamma_pos, gamma_neg=gamma_neg)
     else:
         return Cyclical_FocalLoss(gamma_pos=gamma_pos, gamma_neg=gamma_neg, 
-                                  gamma0=gamma0, epochs=epochs, factor=factor)
+                                  gamma_hc=gamma_hc, epochs=epochs, factor=factor)
 
 class ASLSingleLabel(nn.Module):
     '''
@@ -111,14 +111,14 @@ class Cyclical_FocalLoss(nn.Module):
     '''
     This loss is intended for single-label classification problems
     '''
-    def __init__(self, gamma_pos=0, gamma_neg=4, gamma0=0, eps: float = 0.1, reduction='mean', epochs=200,
+    def __init__(self, gamma_pos=0, gamma_neg=4, gamma_hc=0, eps: float = 0.1, reduction='mean', epochs=200,
                  factor=2):
         super(Cyclical_FocalLoss, self).__init__()
 
         self.eps = eps
         self.logsoftmax = nn.LogSoftmax(dim=-1)
         self.targets_classes = []
-        self.gamma0 = gamma0
+        self.gamma_hc = gamma_hc
         self.gamma_pos = gamma_pos
         self.gamma_neg = gamma_neg
         self.reduction = reduction
@@ -156,7 +156,7 @@ class Cyclical_FocalLoss(nn.Module):
         xs_neg = xs_neg * anti_targets
         asymmetric_w = torch.pow(1 - xs_pos - xs_neg,
                                  self.gamma_pos * targets + self.gamma_neg * anti_targets)
-        positive_w = torch.pow(1 + xs_pos,self.gamma0 * targets)
+        positive_w = torch.pow(1 + xs_pos,self.gamma_hc * targets)
         log_preds = log_preds * ((1 - eta)* asymmetric_w + eta * positive_w)
 
         if self.eps > 0:  # label smoothing

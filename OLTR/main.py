@@ -19,7 +19,7 @@ parser.add_argument('--test_open', default=False, action='store_true')
 parser.add_argument('--output_logits', default=False)
 parser.add_argument('--cyclical_factor', type=float, default=2,
                     help='1->Modified focal loss, 2->Cyclical focal loss (default=2)')
-parser.add_argument('--gamma0', type=int, default=2,
+parser.add_argument('--gamma_hc', type=int, default=2,
                     help='Cyclical focal loss gamma (default=0)')
 parser.add_argument('--gamma_pos', type=int, default=0,
                     help='Asymetric focal loss positive gamma (default=0)')
@@ -44,15 +44,15 @@ if not os.path.isdir(training_opt['log_dir']):
 if args.config.find('cfl') > -1:
     config['criterions']['PerformanceLoss']['loss_params']['gamma_pos'] = args.gamma_pos
     config['criterions']['PerformanceLoss']['loss_params']['gamma_neg'] = args.gamma_neg
-    config['criterions']['PerformanceLoss']['loss_params']['gamma0'] = args.gamma0
+    config['criterions']['PerformanceLoss']['loss_params']['gamma_hc'] = args.gamma_hc
     config['criterions']['PerformanceLoss']['loss_params']['factor'] = args.cyclical_factor
     indx1 = args.config.find("config/") + 7
     indx2 = args.config[indx1:].find("/") 
     dataset = args.config[indx1:indx1+indx2] 
     if training_opt['log_dir'].find("meta") > -1:
-        training_opt['log_dir'] = './logs/'+dataset+'/meta_embedding'+'_cfl_G'+str(args.gamma0)+str(args.gamma_pos)+str(args.gamma_neg)
+        training_opt['log_dir'] = './logs/'+dataset+'/meta_embedding'+'_cfl_G'+str(args.gamma_hc)+str(args.gamma_pos)+str(args.gamma_neg)
     else:
-        training_opt['log_dir'] = './logs/'+dataset+'/stage1'+'_cfl_G'+str(args.gamma0)+str(args.gamma_pos)+str(args.gamma_neg)
+        training_opt['log_dir'] = './logs/'+dataset+'/stage1'+'_cfl_G'+str(args.gamma_hc)+str(args.gamma_pos)+str(args.gamma_neg)
     print(" training_opt['log_dir']= ",  training_opt['log_dir'])
     if not os.path.exists(training_opt['log_dir']):
         os.mkdir(training_opt['log_dir'])

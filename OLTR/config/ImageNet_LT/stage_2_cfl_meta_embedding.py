@@ -36,7 +36,7 @@ criterions = {}
 #perf_loss_param = {}
 #criterions['PerformanceLoss'] = {'def_file': './loss/SoftmaxLoss.py', 'loss_params': perf_loss_param,
 #                                 'optim_params': None, 'weight': 1.0}
-perf_loss_param = {'gamma_pos': 0, 'gamma_neg': 4, 'gamma0': 2, 'epochs': 30, 'factor': 4 }
+perf_loss_param = {'gamma_pos': 0, 'gamma_neg': 4, 'gamma_hc': 2, 'epochs': 30, 'factor': 4 }
 criterions['PerformanceLoss'] = {'def_file': './loss/asl_focal_loss.py', 'loss_params': perf_loss_param,
                                  'optim_params': None, 'weight': 1.0}
 feat_loss_param = {'feat_dim': training_opt['feature_dim'], 'num_classes': training_opt['num_classes']}

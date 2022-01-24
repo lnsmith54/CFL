@@ -94,8 +94,8 @@ class model ():
             print("key ", key," val ", val)
             def_file = val['def_file']
             if def_file.find('focal') > 0:
-#                print("val['loss_params']['gamma0'] ",val['loss_params']['gamma0'])
-                if val['loss_params']['gamma0'] > 0:
+#                print("val['loss_params']['gamma_hc'] ",val['loss_params']['gamma_hc'])
+                if val['loss_params']['gamma_hc'] > 0:
                     self.CFL = True
 #                    print("CFL ", self.CFL)
             loss_args = val['loss_params'].values()
