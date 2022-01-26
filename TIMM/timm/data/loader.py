@@ -9,10 +9,8 @@ import random
 from functools import partial
 from typing import Callable
 
-import torch
 import torch.utils.data
 import numpy as np
-import csv
 
 from .transforms_factory import create_transform
 from .constants import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD
@@ -223,7 +221,6 @@ def create_loader(
             samples =  torch.Tensor(Samples).short()
             sampler = torch.utils.data.SubsetRandomSampler(samples)
             print("Training sampler SubsetRandomSampler from ",read_sampler)
-
     if distributed and not isinstance(dataset, torch.utils.data.IterableDataset):
         if is_training:
             if num_aug_repeats:

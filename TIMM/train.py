@@ -34,7 +34,6 @@ from timm.models import create_model, safe_model_name, resume_checkpoint, load_c
 from timm.utils import *
 from timm.loss import *
 from timm.loss.asl_focal_loss import *
-from timm.loss.clcarwin_focal_loss import *
 from timm.optim import create_optimizer_v2, optimizer_kwargs
 from timm.scheduler import create_scheduler
 from timm.utils import ApexScaler, NativeScaler
@@ -150,12 +149,12 @@ parser.add_argument('--clip_min', default=0, type=float,
 parser.add_argument('--clip_max', default=100, type=float, 
                     help='Max threshold for cyclical gradient clipping (default=100')
 parser.add_argument('--focal_loss', type=str, default='',
-                    help='Focal Loss. One of ("sym", "asym", "cyclical", "asym-cyclical)')
+                    help='Focal Loss. One of ("sym", "asym", "asym-cyclical)')
 parser.add_argument('--cyclical_factor', type=float, default=2, 
                     help='1->Modified focal loss, 2->Cyclical focal loss (default=2)')
 parser.add_argument('--gamma', type=float, default=2, 
                     help='Symetric focal loss gamma (default=2)')
-parser.add_argument('--gamma0', type=float, default=0, 
+parser.add_argument('--gamma_hc', type=float, default=0, 
                     help='Cyclical focal loss gamma (default=0)')
 parser.add_argument('--gamma_pos', type=float, default=0, 
                     help='Asymetric focal loss positive gamma (default=0)')
@@ -607,12 +606,9 @@ def main():
         train_loss_fn = FocalLoss(gamma=args.gamma)
     elif args.focal_loss=="asym":
         train_loss_fn = ASLSingleLabel(gamma_pos=args.gamma_pos, gamma_neg=args.gamma_neg)
-    elif args.focal_loss=="cyclical":
-        train_loss_fn = CFocalLoss(gamma=args.gamma, gamma0=args.gamma0, epochs=num_epochs, 
-                                   factor=args.cyclical_factor)
     elif args.focal_loss=="asym-cyclical":
         train_loss_fn = Cyclical_FocalLoss(gamma_pos=args.gamma_pos, gamma_neg=args.gamma_neg,
-                        epochs=num_epochs, gamma0=args.gamma0, factor=args.cyclical_factor)
+                        epochs=num_epochs, gamma_hc=args.gamma_hc, factor=args.cyclical_factor)
     elif args.jsd_loss:
         assert num_aug_splits > 1  # JSD only valid with aug splits set
         train_loss_fn = JsdCrossEntropy(num_splits=num_aug_splits, smoothing=args.smoothing)
