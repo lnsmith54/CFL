@@ -34,6 +34,7 @@ from timm.models import create_model, safe_model_name, resume_checkpoint, load_c
 from timm.utils import *
 from timm.loss import *
 from timm.loss.asl_focal_loss import *
+from timm.loss.clcarwin_focal_loss import *
 from timm.optim import create_optimizer_v2, optimizer_kwargs
 from timm.scheduler import create_scheduler
 from timm.utils import ApexScaler, NativeScaler
@@ -86,6 +87,8 @@ parser.add_argument('--class-map', default='', type=str, metavar='FILENAME',
                     help='path to class to idx mapping file (default: "")')
 parser.add_argument('--train_size', type=int, default=0, 
                     help='Number of samples to use for training (default=0 means no limit)')
+parser.add_argument('--read_sampler', type=str, default=None, 
+                    help='CSV File containing training sample numbers (default=None)')
 
 # Model parameters
 parser.add_argument('--model', default='resnet50', type=str, metavar='MODEL',
@@ -149,15 +152,16 @@ parser.add_argument('--clip_max', default=100, type=float,
 parser.add_argument('--focal_loss', type=str, default='',
                     help='Focal Loss. One of ("sym", "asym", "cyclical", "asym-cyclical)')
 parser.add_argument('--cyclical_factor', type=float, default=2, 
-                    help='Cyclical focal loss factor; must be >=1 (default=2)')
+                    help='1->Modified focal loss, 2->Cyclical focal loss (default=2)')
 parser.add_argument('--gamma', type=float, default=2, 
                     help='Symetric focal loss gamma (default=2)')
-parser.add_argument('--gamma_hc', type=float, default=0, 
+parser.add_argument('--gamma0', type=float, default=0, 
                     help='Cyclical focal loss gamma (default=0)')
 parser.add_argument('--gamma_pos', type=float, default=0, 
                     help='Asymetric focal loss positive gamma (default=0)')
 parser.add_argument('--gamma_neg', type=float, default=4, 
                     help='Asymetric focal loss negative gamma (default=4)')
+
 
 # Learning rate schedule parameters
 parser.add_argument('--sched', default='cosine', type=str, metavar='SCHEDULER',
@@ -347,7 +351,7 @@ def _parse_args():
 def main():
     setup_default_logging()
     args, args_text = _parse_args()
-#    print(args)
+
     
     if args.log_wandb:
         if has_wandb:
@@ -556,6 +560,7 @@ def main():
         input_size=data_config['input_size'],
         batch_size=args.batch_size,
         train_size=args.train_size,
+        read_sampler=args.read_sampler,
         is_training=True,
         use_prefetcher=args.prefetcher,
         no_aug=args.no_aug,
@@ -603,11 +608,11 @@ def main():
     elif args.focal_loss=="asym":
         train_loss_fn = ASLSingleLabel(gamma_pos=args.gamma_pos, gamma_neg=args.gamma_neg)
     elif args.focal_loss=="cyclical":
-        train_loss_fn = CFocalLoss(gamma=args.gamma, gamma_hc=args.gamma_hc, epochs=num_epochs, 
+        train_loss_fn = CFocalLoss(gamma=args.gamma, gamma0=args.gamma0, epochs=num_epochs, 
                                    factor=args.cyclical_factor)
     elif args.focal_loss=="asym-cyclical":
         train_loss_fn = Cyclical_FocalLoss(gamma_pos=args.gamma_pos, gamma_neg=args.gamma_neg,
-                        epochs=num_epochs, gamma_hc=args.gamma_hc, factor=args.cyclical_factor)
+                        epochs=num_epochs, gamma0=args.gamma0, factor=args.cyclical_factor)
     elif args.jsd_loss:
         assert num_aug_splits > 1  # JSD only valid with aug splits set
         train_loss_fn = JsdCrossEntropy(num_splits=num_aug_splits, smoothing=args.smoothing)
@@ -724,6 +729,7 @@ def train_one_epoch(
 
     model.train()
     if args.T_min > 0:
+        #   eta = abs(1 - 2*epoch/(args.epochs-1))
         if args.cyclical_factor*epoch < args.epochs:
             eta = 1.0 - args.cyclical_factor *epoch/(args.epochs-1)
         elif args.cyclical_factor == 1.0:
