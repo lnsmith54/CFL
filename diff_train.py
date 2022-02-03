@@ -101,7 +101,7 @@ index 10d839b..140779c 100755
 +                else:
 +                    eta = (args.cyclical_factor*epoch/(num_epochs-1) - 1.0) /(args.cyclical_factor - 1.0) 
 +            if args.wd_min > 0:
-+                optimizer.param_groups[0]['weight_decay'] = (1 - eta)*args.wd_max + eta*args.wd_min
++                optimizer.param_groups[1]['weight_decay'] = (1 - eta)*args.wd_max + eta*args.wd_min
 +            elif args.clip_min > 0:
 +                args.clip_grad = (1 - eta)*args.clip_max + eta*args.clip_min
 +
