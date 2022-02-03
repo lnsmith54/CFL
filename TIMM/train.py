@@ -661,7 +661,7 @@ def main():
                 else:
                     eta = (args.cyclical_factor*epoch/(num_epochs-1) - 1.0) /(args.cyclical_factor - 1.0) 
             if args.wd_min > 0:
-                optimizer.param_groups[0]['weight_decay'] = (1 - eta)*args.wd_max + eta*args.wd_min
+                optimizer.param_groups[1]['weight_decay'] = (1 - eta)*args.wd_max + eta*args.wd_min
             elif args.clip_min > 0:
                 args.clip_grad = (1 - eta)*args.clip_max + eta*args.clip_min
 
@@ -789,12 +789,14 @@ def train_one_epoch(
                 losses_m.update(reduced_loss.item(), input.size(0))
 
             if args.local_rank == 0:
+                WD = optimizer.param_groups[1]['weight_decay']
                 _logger.info(
                     'Train: {} [{:>4d}/{} ({:>3.0f}%)]  '
                     'Loss: {loss.val:#.4g} ({loss.avg:#.3g})  '
                     'Time: {batch_time.val:.3f}s, {rate:>7.2f}/s  '
                     '({batch_time.avg:.3f}s, {rate_avg:>7.2f}/s)  '
                     'LR: {lr:.3e}  '
+                    'WD: {WD:.3e}  '
                     'Data: {data_time.val:.3f} ({data_time.avg:.3f})'.format(
                         epoch,
                         batch_idx, len(loader),
@@ -803,7 +805,7 @@ def train_one_epoch(
                         batch_time=batch_time_m,
                         rate=input.size(0) * args.world_size / batch_time_m.val,
                         rate_avg=input.size(0) * args.world_size / batch_time_m.avg,
-                        lr=lr,
+                        lr=lr, WD=WD,
                         data_time=data_time_m))
 
                 if args.save_images and output_dir:
