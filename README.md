@@ -1,6 +1,6 @@
 # CFL
 
-This repository contains the code used for the following two papers: "General Cyclical Training of Neural Networks" and "Cyclical Focal Loss". These new papers will be posted to arXiv.org.
+This repository contains the code used for the following two papers: "General Cyclical Training of Neural Networks" and "Cyclical Focal Loss". These new papers are posted to arXiv.org at https://arxiv.org/pdf/2202.08835 and https://arxiv.org/pdf/2202.08978, respctively.
 
 These papers describe several novel techniques that are implemented in this code: cyclical focal loss, cyclical weight decay, cyclical softmax temperature, and cyclical gradient clipping. 
 
